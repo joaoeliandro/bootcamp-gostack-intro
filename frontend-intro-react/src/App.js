@@ -13,11 +13,20 @@ function App() {
     useEffect(() => {
         api.get('repositories').then(response => {
             setProjects(response.data);
-        })
+        });
     }, []);
 
-    function handleAppProjects() {
+    async function handleAppProjects() {
         // setProjects([...projects, `teste ${projects.length + 1}`]);
+        const response = await api.post('repositories', {
+            title: "project-black-shock",
+            url: "https://github.com/joaoeliandro/project-black-shock",
+            techs: ["Node.js"]
+        });
+
+        const newProject = response.data;
+
+        setProjects([...projects, newProject]);
     }
 
     return (
