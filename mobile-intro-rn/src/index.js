@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, FlatList, Text, StyleSheet, StatusBar } from 'react-native';
+import {
+    View, SafeAreaView, FlatList, Text,
+    StyleSheet, StatusBar, TouchableOpacity
+} from 'react-native';
 
 import api from './services/api';
 
@@ -8,10 +11,21 @@ export default function App() {
 
     useEffect(() => {
         api.get('repositories').then(response => {
-            console.log(response.data);
             setRepositories(response.data);
         });
     }, []);
+
+    async function handleAddRepository() {
+        const response = await api.post('repositories', {
+            title: 'Game-endless-runner',
+            url: 'https://github.com/joaoeliandro/game-endless-runner',
+            techs: ['p5', 'Canvas', 'Node.js']
+        });
+
+        const newRepository = response.data;
+
+        setRepositories([...repositories, newRepository]);
+    }
 
     return (
         <>
@@ -26,6 +40,11 @@ export default function App() {
                         <Text style={style.title}>{repository.title}</Text>
                     )}
                 />
+
+                <TouchableOpacity activeOpacity={0.6}
+                    style={style.button} onPress={handleAddRepository}>
+                    <Text style={style.textButton}>Add repository</Text>
+                </TouchableOpacity>
             </SafeAreaView>
         </>
     );
@@ -35,11 +54,22 @@ const style = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#7159c1',
-        justifyContent: 'center',
-        alignItems: 'center'
+        paddingTop: 20
     },
     title: {
         color: '#fff',
         fontSize: 30,
+    },
+    button: {
+        backgroundColor: '#fff',
+        margin: 20,
+        height: 50,
+        borderRadius: 4,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    textButton: {
+        fontWeight: "bold",
+        fontSize: 16,
     }
 });
